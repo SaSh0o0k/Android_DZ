@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Shop</string>
+    <string name="register">Реєстрація</string>
+    <string name="email">Пошта</string>
+    <string name="pib">ПІБ</string>
+    <string name="image">Фото</string>
+    <string name="phone">Телефон</string>
+    <string name="password">Пароль</string>
+    <string name="selectImage">Обрати фото</string>
+    <string name="home">Home</string>
+    <string name="search">Search</string>
+    <string name="notifications">Notifications</string>
+</resources>
