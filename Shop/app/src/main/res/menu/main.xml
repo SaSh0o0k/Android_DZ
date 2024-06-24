@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/m_category"
+        android:title="Категорії"/>
     <item android:id="@+id/m_login"
         android:title="Вхід"/>
     <item android:id="@+id/m_register"
