@@ -1,15 +1,28 @@
+import Categories from "pages/categories/Categories.tsx";
+import CreateCategory from "pages/categories/CreateCategory.tsx";
+import { Route, Routes } from "react-router-dom";
 
-import './App.css'
+import Dashboard from "./pages/Dashboard.tsx";
+import Settings from "./pages/Settings.tsx";
+import Layout from "./partials/layouts/Layout.tsx";
 
 function App() {
-
   return (
-    <>
-      <h1 className="text-3xl font-bold underline">
-        Hello world!
-      </h1>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Layout />}>
+        <Route index element={<Dashboard />} />
+
+        <Route path="categories/">
+          <Route path="list" element={<Categories />} />
+          <Route path="create" element={<CreateCategory />} />
+        </Route>
+
+        <Route path="settings/">
+          <Route path="my-account" element={<Settings />} />
+        </Route>
+      </Route>
+    </Routes>
+  );
 }
 
-export default App
+export default App;

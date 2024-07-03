@@ -1,13 +1,18 @@
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter as Router } from 'react-router-dom';
-import ThemeProvider from './utils/ThemeContext.tsx';
-import App from './App.tsx'
-import './index.css'
+import { store } from "app/store.ts";
+import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { BrowserRouter as Router } from "react-router-dom";
+import ThemeProvider from "utils/contexts/ThemeContext.tsx";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-    <Router>
+import App from "./App.tsx";
+import "./css/index.css";
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+    <Provider store={store}>
+      <Router>
         <ThemeProvider>
-            <App />
+          <App />
         </ThemeProvider>
-    </Router>
-)
+      </Router>
+    </Provider>,
+);

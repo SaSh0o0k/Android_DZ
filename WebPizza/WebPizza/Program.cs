@@ -1,6 +1,11 @@
 using Microsoft.Extensions.FileProviders;
 using Microsoft.EntityFrameworkCore;
+using System;
 using WebPizza.Data;
+using WebPizza.Interfaces;
+using WebPizza.Mapper;
+using WebPizza.Services;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +18,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
+builder.Services.AddAutoMapper(typeof(AppMapProfile));
+builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddTransient<IImageValidator, ImageValidator>();
+
+builder.Services.AddCors();
+
 var app = builder.Build();
+
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 string imagesDirPath = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["ImagesDir"]);
 
@@ -29,11 +44,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+//if (app.Environment.IsDevelopment())
+//{
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+//}
 
 app.UseAuthorization();
 
