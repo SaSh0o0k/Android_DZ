@@ -6,6 +6,7 @@ using WebPizza.Data;
 using WebPizza.Data.Entities;
 using WebPizza.Interfaces;
 using WebPizza.ViewModels.Category;
+using WebPizza.ViewModels.Pagination;
 
 namespace WebPizza.Controllers;
 
@@ -15,6 +16,7 @@ public class CategoriesController(IMapper mapper,
     PizzaDbContext pizzaContext,
     IValidator<CategoryCreateVM> createValidator,
     //IValidator<CategoryUpdateVM> updateValidator,
+    IPaginationService<CategoryVm, CategoryFilterVm> pagination,
     IImageService imageService) : ControllerBase
 {
     [HttpGet]
@@ -115,6 +117,19 @@ public class CategoriesController(IMapper mapper,
                 imageService.DeleteImageIfExists(category.Image);
             }
             return StatusCode(500, "Internal server error");
+        }
+    }
+
+    [HttpGet("getpage")]
+    public async Task<IActionResult> GetPage([FromQuery] CategoryFilterVm vm)
+    {
+        try
+        {
+            return Ok(await pagination.GetPageAsync(vm));
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
         }
     }
 

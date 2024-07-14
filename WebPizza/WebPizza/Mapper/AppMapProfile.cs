@@ -4,6 +4,7 @@ using WebPizza.ViewModels.Category;
 using WebPizza.ViewModels.Ingredient;
 using WebPizza.ViewModels.Pizza;
 using WebPizza.ViewModels.PizzaSizes;
+using WebPizza.ViewModels.Sizes;
 
 namespace WebPizza.Mapper;
 public class AppMapProfile : Profile
@@ -35,6 +36,15 @@ public class AppMapProfile : Profile
                .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size.Name));
 
         CreateMap<PizzaPhotoEntity, PizzaPhotoVm>();
+
+        CreateMap<PizzaCreateVm, PizzaEntity>()
+            .ForMember(c => c.IsAvailable, opt => opt.Ignore())
+            .ForMember(c => c.Rating, opt => opt.Ignore())
+            .ForMember(c => c.Photos, opt => opt.Ignore())
+            .ForMember(c => c.Sizes, opt => opt.Ignore());
+
+        // Sizes
+        CreateMap<PizzaSizeEntity, SizeVm>();
     }
 
 }
