@@ -1,6 +1,6 @@
 ﻿namespace WebPizza.ViewModels.Category
 {
-    public class CategoryUpdateVM
+    public class CategoryEditVm
     {
         public int Id { get; set; }
 

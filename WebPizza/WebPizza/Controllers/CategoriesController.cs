@@ -81,7 +81,7 @@ public class CategoriesController(IMapper mapper,
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm] CategoryUpdateVM vm)
+    public async Task<IActionResult> Update(int id, [FromForm] CategoryEditVm vm)
     {
         //var validationResult = await updateValidator.ValidateAsync(vm);
 
