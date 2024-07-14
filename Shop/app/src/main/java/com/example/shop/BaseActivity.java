@@ -12,24 +12,23 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class BaseActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int select = item.getItemId();
-        if(select==R.id.m_register) {
+        if(select==R.id.register) {
             Intent intent = new Intent(BaseActivity.this, MainActivity.class);
             startActivity(intent);
             return true;
         }
-        if(select==R.id.m_login) {
+        if(select==R.id.login) {
             Intent intent = new Intent(BaseActivity.this, LoginActivity.class);
             startActivity(intent);
             return true;
         }
-        if(select==R.id.m_category) {
+        if(select==R.id.categories) {
             Intent intent = new Intent(BaseActivity.this, CategoryActivity.class);
             startActivity(intent);
             return true;
@@ -40,6 +39,7 @@ public class BaseActivity extends AppCompatActivity {
     }
 
     protected void setupBottomNavigationView(int id) {
+
         BottomNavigationView bottomNavigationView = (BottomNavigationView) findViewById(id);
 
         bottomNavigationView.setOnItemSelectedListener(new BottomNavigationView.OnItemSelectedListener() {

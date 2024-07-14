@@ -26,4 +26,9 @@ public class RetrofitClient {
     public CategoriesApi getCategoriesApi() {
         return retrofit.create(CategoriesApi.class);
     }
+    public PizzaApi getPizzaApi() {
+        return retrofit.create(PizzaApi.class);
+    }
+
+
 }

@@ -6,10 +6,14 @@
     <string name="image">Фото</string>
     <string name="phone">Телефон</string>
     <string name="password">Пароль</string>
-    <string name="selectImage">Обрати фото</string>
-    <string name="home">Home</string>
-    <string name="search">Search</string>
-    <string name="notifications">Notifications</string>
+    <string name="btn_chose_img">Вибрати фото</string>
+    <string name="btn_register">Зареєструватись</string>
+    <string name="login">Вхід</string>
+    <string name="open">Open navigation Drawer</string>
+    <string name="close">Close navigation Drawer</string>
+    <string name="category_name">Назва категорії</string>
     <string name="categories">Категорії</string>
+    <string name="pizza_image">Опис</string>
+
 
 </resources>
