@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WebPizza.Data;
-using WebPizza.Interfaces;
+using WebPizza.Services.Interfaces;
 
 namespace WebPizza.Services;
 

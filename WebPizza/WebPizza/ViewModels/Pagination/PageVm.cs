@@ -1,9 +1,8 @@
-﻿namespace WebPizza.ViewModels.Pagination
+﻿namespace WebPizza.ViewModels.Pagination;
+
+public class PageVm<T>
 {
-    public class PageVm<T>
-    {
-        public IEnumerable<T> Data { get; set; } = null!;
-        public int PagesAvailable { get; set; }
-        public int ItemsAvailable { get; set; }
-    }
+    public IEnumerable<T> Data { get; set; } = null!;
+    public int PagesAvailable { get; set; }
+    public int ItemsAvailable { get; set; }
 }

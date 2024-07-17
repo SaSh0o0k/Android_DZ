@@ -1,27 +1,27 @@
 ﻿using AutoMapper;
-using WebPizza.Data.Entities;
-using WebPizza.Data;
-using WebPizza.Interfaces;
-using WebPizza.Services.ControllerServices.Interfaces;
-using WebPizza.ViewModels.Category;
 using Microsoft.EntityFrameworkCore;
+using WebPizza.Data;
+using WebPizza.Data.Entities;
+using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
+using WebPizza.ViewModels.Category;
 
 namespace WebPizza.Services.ControllerServices;
 
 public class CategoryControllerService(
-PizzaDbContext pizzaContext,
-IMapper mapper,
-IImageService imageService
-) : ICategoryControllerService
+    PizzaDbContext pizzaContext,
+    IMapper mapper,
+    IImageService imageService
+    ) : ICategoryControllerService
 {
-    public async Task CreateAsync(CategoryCreateVM vm)
+    public async Task CreateAsync(CategoryCreateVm vm)
     {
         var category = mapper.Map<CategoryEntity>(vm);
 
         try
         {
             category.Image = await imageService.SaveImageAsync(vm.Image);
-            //category.DateCreated = DateTime.UtcNow;
+            category.DateCreated = DateTime.UtcNow;
 
             await pizzaContext.Categories.AddAsync(category);
             await pizzaContext.SaveChangesAsync();

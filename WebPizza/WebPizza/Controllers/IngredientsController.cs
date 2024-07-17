@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebPizza.Data;
+using WebPizza.Services.ControllerServices;
 using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
+using WebPizza.ViewModels.Category;
 using WebPizza.ViewModels.Ingredient;
 
 namespace WebPizza.Controllers;
-
 
 [Route("api/[controller]/[action]")]
 [ApiController]

@@ -1,10 +1,12 @@
-﻿using WebPizza.ViewModels.Ingredient;
+﻿using WebPizza.ViewModels.Category;
+using WebPizza.ViewModels.Ingredient;
 
-namespace WebPizza.Services.ControllerServices.Interfaces;
-
-public interface IIngredientControllerService
+namespace WebPizza.Services.ControllerServices.Interfaces
 {
-    Task CreateAsync(IngredientCreateVm vm);
-    Task UpdateAsync(IngredientEditVm vm);
-    Task DeleteIfExistsAsync(int id);
+    public interface IIngredientControllerService
+    {
+        Task CreateAsync(IngredientCreateVm vm);
+        Task UpdateAsync(IngredientEditVm vm);
+        Task DeleteIfExistsAsync(int id);
+    }
 }

@@ -1,47 +1,48 @@
-﻿using WebPizza.Interfaces;
+﻿using WebPizza.Services.Interfaces;
 using SixLabors.ImageSharp;
 
-namespace WebPizza.Services;
-
-public class ImageValidator : IImageValidator
+namespace WebPizza.Services
 {
-    public async Task<bool> IsValidImageAsync(IFormFile image, CancellationToken cancellationToken)
+    public class ImageValidator : IImageValidator
     {
-        using var stream = image.OpenReadStream();
-
-        try
+        public async Task<bool> IsValidImageAsync(IFormFile image, CancellationToken cancellationToken)
         {
-            using var imageInstance = await Image.LoadAsync(stream, cancellationToken);
-            return true;
+            using var stream = image.OpenReadStream();
+
+            try
+            {
+                using var imageInstance = await Image.LoadAsync(stream, cancellationToken);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
-        catch
+
+        public async Task<bool> IsValidNullPossibeImageAsync(IFormFile? image, CancellationToken cancellationToken)
         {
-            return false;
+            if (image is null)
+                return true;
+
+            return await IsValidImageAsync(image, cancellationToken);
         }
-    }
 
-    public async Task<bool> IsValidNullPossibeImageAsync(IFormFile image, CancellationToken cancellationToken)
-    {
-        if (image is null)
-            return true;
+        public async Task<bool> IsValidImagesAsync(IEnumerable<IFormFile> images, CancellationToken cancellationToken)
+        {
+            var tasts = images.Select(i => IsValidImageAsync(i, cancellationToken));
 
-        return await IsValidImageAsync(image, cancellationToken);
-    }
+            var results = await Task.WhenAll(tasts);
 
-    public async Task<bool> IsValidImagesAsync(IEnumerable<IFormFile> images, CancellationToken cancellationToken)
-    {
-        var tasts = images.Select(i => IsValidImageAsync(i, cancellationToken));
+            return results.All(r => r);
+        }
 
-        var results = await Task.WhenAll(tasts);
+        public async Task<bool> IsValidNullPossibeImagesAsync(IEnumerable<IFormFile>? images, CancellationToken cancellationToken)
+        {
+            if (images is null)
+                return true;
 
-        return results.All(r => r);
-    }
-
-    public async Task<bool> IsValidNullPossibeImagesAsync(IEnumerable<IFormFile> images, CancellationToken cancellationToken)
-    {
-        if (images is null)
-            return true;
-
-        return await IsValidImagesAsync(images.Where(i => i is not null), cancellationToken);
+            return await IsValidImagesAsync(images.Where(i => i is not null), cancellationToken);
+        }
     }
 }

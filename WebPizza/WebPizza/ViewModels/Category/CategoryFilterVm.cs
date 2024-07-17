@@ -1,8 +1,9 @@
 ﻿using WebPizza.ViewModels.Pagination;
 
-namespace WebPizza.ViewModels.Category;
-
-public class CategoryFilterVm : PaginationVm
+namespace WebPizza.ViewModels.Category
 {
-    public string Name { get; set; }
+    public class CategoryFilterVm : PaginationVm
+    {
+        public string? Name { get; set; }
+    }
 }

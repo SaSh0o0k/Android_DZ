@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebPizza.Data;
-using WebPizza.Data.Entities;
-using WebPizza.Interfaces;
+using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
 using WebPizza.ViewModels.Category;
-using WebPizza.ViewModels.Pagination;
 
 namespace WebPizza.Controllers;
 
@@ -14,17 +14,21 @@ namespace WebPizza.Controllers;
 [ApiController]
 public class CategoriesController(IMapper mapper,
     PizzaDbContext pizzaContext,
-    IValidator<CategoryCreateVM> createValidator,
-    //IValidator<CategoryUpdateVM> updateValidator,
+    IValidator<CategoryCreateVm> createValidator,
+    ICategoryControllerService service,
     IPaginationService<CategoryVm, CategoryFilterVm> pagination,
-    IImageService imageService) : ControllerBase
+    IValidator<CategoryEditVm> editValidator
+    ) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
         try
         {
-            var list = await pizzaContext.Categories.ToListAsync();
+            var list = await pizzaContext.Categories
+                .ProjectTo<CategoryVm>(mapper.ConfigurationProvider)
+                .ToArrayAsync();
+
             return Ok(list);
         }
         catch (Exception)
@@ -33,94 +37,7 @@ public class CategoriesController(IMapper mapper,
         }
     }
 
-    [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        try
-        {
-            var category = await pizzaContext.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            imageService.DeleteImageIfExists(category.Image);
-            pizzaContext.Categories.Remove(category);
-            await pizzaContext.SaveChangesAsync();
-
-            return NoContent();
-        }
-        catch (Exception)
-        {
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Post([FromForm] CategoryCreateVM vm)
-    {
-        var validationResult = await createValidator.ValidateAsync(vm);
-
-        if (!validationResult.IsValid)
-            return BadRequest(validationResult.Errors);
-
-
-        var category = mapper.Map<CategoryEntity>(vm);
-
-        try
-        {
-            category.Image = await imageService.SaveImageAsync(vm.Image);
-            await pizzaContext.Categories.AddAsync(category);
-            await pizzaContext.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetAll), new { id = category.Id }, category);
-        }
-        catch (Exception)
-        {
-            imageService.DeleteImageIfExists(category.Image);
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromForm] CategoryEditVm vm)
-    {
-        //var validationResult = await updateValidator.ValidateAsync(vm);
-
-        //if (!validationResult.IsValid)
-        //    return BadRequest(validationResult.Errors);
-
-        var category = await pizzaContext.Categories.FirstOrDefaultAsync(c => c.Id == id);
-        if (category == null)
-        {
-            return NotFound();
-        }
-
-        category.Name = vm.Name;
-
-        if (vm.Image != null)
-        {
-            imageService.DeleteImageIfExists(category.Image);
-            category.Image = await imageService.SaveImageAsync(vm.Image);
-        }
-
-        try
-        {
-            pizzaContext.Categories.Update(category);
-            await pizzaContext.SaveChangesAsync();
-            return Ok(category);
-        }
-        catch
-        {
-            if (vm.Image != null)
-            {
-                imageService.DeleteImageIfExists(category.Image);
-            }
-            return StatusCode(500, "Internal server error");
-        }
-    }
-
-    [HttpGet()]
+    [HttpGet]
     public async Task<IActionResult> GetPage([FromQuery] CategoryFilterVm vm)
     {
         try
@@ -132,5 +49,75 @@ public class CategoriesController(IMapper mapper,
             return StatusCode(500, ex.Message);
         }
     }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetById(int id)
+    {
+        var category = await pizzaContext.Categories
+            .ProjectTo<CategoryVm>(mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (category is null)
+            return NotFound();
+
+        return Ok(category);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromForm] CategoryCreateVm vm)
+    {
+        var validationResult = await createValidator.ValidateAsync(vm);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        try
+        {
+            await service.CreateAsync(vm);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
+    [HttpPatch]
+    public async Task<IActionResult> Update([FromForm] CategoryEditVm vm)
+    {
+        var validationResult = await editValidator.ValidateAsync(vm);
+
+        if (!validationResult.IsValid)
+        {
+            return BadRequest(validationResult.Errors);
+        }
+
+        try
+        {
+            await service.UpdateAsync(vm);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        try
+        {
+            await service.DeleteIfExistsAsync(id);
+            return Ok();
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, ex.Message);
+        }
+    }
+
 
 }

@@ -1,7 +1,7 @@
-﻿using SixLabors.ImageSharp;
+﻿using WebPizza.Services.Interfaces;
+using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Webp;
 using SixLabors.ImageSharp.Processing;
-using WebPizza.Interfaces;
 
 namespace WebPizza.Services;
 
@@ -116,7 +116,7 @@ public class ImageService(
 
     public string ImagesDir => Path.Combine(
         Directory.GetCurrentDirectory(),
-        configuration["ImagesDir"] ?? throw new NullReferenceException("Images")
+            configuration["ImagesDir"] ?? throw new NullReferenceException("Images")
     );
 
     public void DeleteImage(string nameWithFormat)

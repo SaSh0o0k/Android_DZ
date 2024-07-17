@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using WebPizza.Data.Entities;
+using WebPizza.Data.Entities.Identity;
+using WebPizza.ViewModels.Account;
 using WebPizza.ViewModels.Category;
 using WebPizza.ViewModels.Ingredient;
 using WebPizza.ViewModels.Pizza;
@@ -11,7 +13,11 @@ public class AppMapProfile : Profile
 {
     public AppMapProfile()
     {
-        CreateMap<CategoryCreateVM, CategoryEntity>()
+        // User
+        CreateMap<RegisterVm, UserEntity>();
+
+        // Category
+        CreateMap<CategoryCreateVm, CategoryEntity>()
             .ForMember(c => c.Image, opt => opt.Ignore());
 
         CreateMap<CategoryEntity, CategoryVm>();
@@ -32,19 +38,20 @@ public class AppMapProfile : Profile
         // Pizza
         CreateMap<PizzaEntity, PizzaVm>();
 
+        CreateMap<PizzaCreateVm, PizzaEntity>()
+             .ForMember(c => c.IsAvailable, opt => opt.Ignore())
+             .ForMember(c => c.Rating, opt => opt.Ignore())
+             .ForMember(c => c.Photos, opt => opt.Ignore())
+             .ForMember(c => c.Sizes, opt => opt.Ignore());
+
         CreateMap<PizzaSizePriceEntity, PizzaSizePriceVm>()
                .ForMember(dest => dest.SizeName, opt => opt.MapFrom(src => src.Size.Name));
 
         CreateMap<PizzaPhotoEntity, PizzaPhotoVm>();
 
-        CreateMap<PizzaCreateVm, PizzaEntity>()
-            .ForMember(c => c.IsAvailable, opt => opt.Ignore())
-            .ForMember(c => c.Rating, opt => opt.Ignore())
-            .ForMember(c => c.Photos, opt => opt.Ignore())
-            .ForMember(c => c.Sizes, opt => opt.Ignore());
-
         // Sizes
         CreateMap<PizzaSizeEntity, SizeVm>();
+
     }
 
 }

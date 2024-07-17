@@ -1,18 +1,20 @@
 ﻿using AutoMapper;
-using WebPizza.Data.Entities;
-using WebPizza.Data;
-using WebPizza.Interfaces;
-using WebPizza.Services.ControllerServices.Interfaces;
-using WebPizza.ViewModels.Pizza;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using WebPizza.Data;
+using WebPizza.Data.Entities;
+using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
+using WebPizza.ViewModels.Ingredient;
+using WebPizza.ViewModels.Pizza;
 
 namespace WebPizza.Services.ControllerServices
 {
     public class PizzaControllerService(
-       PizzaDbContext pizzaContext,
-       IMapper mapper,
-       IImageService imageService
-   ) : IPizzaControllerService
+        PizzaDbContext pizzaContext,
+        IMapper mapper,
+        IImageService imageService
+    ) : IPizzaControllerService
     {
         public async Task CreateAsync(PizzaCreateVm vm)
         {
@@ -99,6 +101,101 @@ namespace WebPizza.Services.ControllerServices
             {
                 throw;
             }
+        }
+
+        public async Task UpdateAsync(PizzaEditVm vm)
+        {
+            var pizza = await pizzaContext.Pizzas
+                    .Include(x => x.Photos)
+                    .Include(x => x.Ingredients)
+                    .Include(x => x.Category)
+                    .Include(x => x.Sizes)
+                .FirstOrDefaultAsync(c => c.Id == vm.Id);
+
+            try
+            {
+                if (pizza == null)
+                {
+                    throw new Exception("Pizza not found");
+                }
+
+                if (vm.Name != null)
+                {
+                    pizza.Name = vm.Name;
+                }
+
+                if (vm.Description != null)
+                {
+                    pizza.Description = vm.Description;
+                }
+
+                if (vm.CategoryId != null)
+                {
+                    pizza.CategoryId = (int)vm.CategoryId;
+                }
+
+                if (vm.IngredientIds != null && vm.IngredientIds.Any())
+                {
+                    pizza.Ingredients.Clear();
+
+                    foreach (var ingredientId in vm.IngredientIds)
+                    {
+                        pizza.Ingredients.Add(new PizzaIngredientEntity
+                        {
+                            IngredientId = ingredientId
+                        });
+                    }
+                }
+
+                if (vm.Sizes != null && vm.Sizes.Any())
+                {
+                    pizza.Sizes.Clear();
+
+                    foreach (var size in vm.Sizes)
+                    {
+                        pizza.Sizes.Add(new PizzaSizePriceEntity
+                        {
+                            SizeId = size.SizeId,
+                            Price = size.Price
+                        });
+                    }
+                }
+
+                if (vm.Photos != null && vm.Photos.Any())
+                {
+                    foreach (var photo in pizza.Photos)
+                    {
+                        imageService.DeleteImageIfExists(photo.Name);
+                    }
+
+                    pizza.Photos.Clear();
+                }
+
+
+                if (vm.Photos != null && vm.Photos.Any())
+                {
+                    int priorityIndex = 1;
+
+                    foreach (var photo in vm.Photos)
+                    {
+                        pizza.Photos.Add(new PizzaPhotoEntity
+                        {
+                            Name = await imageService.SaveImageAsync(photo),
+                            Priority = priorityIndex
+                        });
+                        priorityIndex++;
+                    }
+                }
+
+                pizzaContext.Pizzas.Update(pizza);
+                await pizzaContext.SaveChangesAsync();
+
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
         }
     }
 }

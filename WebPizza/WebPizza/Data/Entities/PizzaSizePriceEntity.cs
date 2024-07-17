@@ -2,6 +2,7 @@
 
 namespace WebPizza.Data.Entities
 {
+
     [Table("tbl_pizza_sizes")]
     public class PizzaSizePriceEntity : BaseEntity
     {

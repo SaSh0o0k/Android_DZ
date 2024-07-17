@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using WebPizza.Data.Entities;
-using WebPizza.Data;
-using WebPizza.Interfaces;
-using WebPizza.Services.ControllerServices.Interfaces;
-using WebPizza.ViewModels.Ingredient;
 using Microsoft.EntityFrameworkCore;
+using WebPizza.Data;
+using WebPizza.Data.Entities;
+using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
+using WebPizza.ViewModels.Ingredient;
 
 namespace WebPizza.Services.ControllerServices;
 

@@ -2,6 +2,7 @@
 
 namespace WebPizza.Data.Entities
 {
+
     [Table("tbl_pizza_photos")]
 
     public class PizzaPhotoEntity : BaseEntity

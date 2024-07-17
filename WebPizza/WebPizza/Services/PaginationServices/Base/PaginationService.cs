@@ -1,7 +1,7 @@
 ﻿using AutoMapper.QueryableExtensions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using WebPizza.Interfaces;
+using WebPizza.Services.Interfaces;
 using WebPizza.ViewModels.Pagination;
 
 namespace WebPizza.Services.PaginationServices.Base;

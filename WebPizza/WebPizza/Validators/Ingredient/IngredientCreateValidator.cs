@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using WebPizza.Interfaces;
+using WebPizza.Services.Interfaces;
 using WebPizza.ViewModels.Ingredient;
 
 namespace WebPizza.Validators.Ingredient;

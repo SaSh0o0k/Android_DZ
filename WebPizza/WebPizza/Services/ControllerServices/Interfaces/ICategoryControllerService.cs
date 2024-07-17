@@ -1,11 +1,10 @@
 ﻿using WebPizza.ViewModels.Category;
 
-namespace WebPizza.Services.ControllerServices.Interfaces
+namespace WebPizza.Services.ControllerServices.Interfaces;
+
+public interface ICategoryControllerService
 {
-    public interface ICategoryControllerService
-    {
-        Task CreateAsync(CategoryCreateVM vm);
-        Task UpdateAsync(CategoryEditVm vm);
-        Task DeleteIfExistsAsync(int id);
-    }
+    Task CreateAsync(CategoryCreateVm vm);
+    Task UpdateAsync(CategoryEditVm vm);
+    Task DeleteIfExistsAsync(int id);
 }

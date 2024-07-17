@@ -1,17 +1,21 @@
-using Microsoft.Extensions.FileProviders;
+using FluentValidation;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using WebPizza.Data;
-using WebPizza.Interfaces;
+using WebPizza.Data.Entities;
+using WebPizza.Data.Entities.Identity;
 using WebPizza.Mapper;
 using WebPizza.Services;
-using FluentValidation;
-using WebPizza.Services.ControllerServices.Interfaces;
 using WebPizza.Services.ControllerServices;
+using WebPizza.Services.ControllerServices.Interfaces;
+using WebPizza.Services.Interfaces;
 using WebPizza.Services.PaginationServices;
 using WebPizza.ViewModels.Category;
 using WebPizza.ViewModels.Pizza;
-using WebPizza.Validators.Pizza;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +23,51 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<PizzaDbContext>(opt =>
     opt.UseNpgsql(builder.Configuration.GetConnectionString("Npgsql")));
 
+builder.Services
+    .AddIdentity<UserEntity, RoleEntity>(options =>
+    {
+        options.Stores.MaxLengthForKeys = 128;
+
+        options.Password.RequiredLength = 8;
+        options.Password.RequireDigit = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireLowercase = false;
+    })
+    .AddEntityFrameworkStores<PizzaDbContext>()
+    .AddDefaultTokenProviders();
+
+var singinKey = new SymmetricSecurityKey(
+    Encoding.UTF8.GetBytes(
+        builder.Configuration["Authentication:Jwt:SecretKey"]
+            ?? throw new NullReferenceException("Authentication:Jwt:SecretKey")
+    )
+);
+
+builder.Services
+    .AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            IssuerSigningKey = singinKey,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero
+        };
+    });
+
+
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,22 +75,21 @@ builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 builder.Services.AddAutoMapper(typeof(AppMapProfile));
 builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
 builder.Services.AddTransient<IImageValidator, ImageValidator>();
-
 builder.Services.AddTransient<IExistingEntityCheckerService, ExistingEntityCheckerService>();
+
+builder.Services.AddTransient<IAccountsControllerService, AccountsControllerService>();
 
 builder.Services.AddTransient<ICategoryControllerService, CategoryControllerService>();
 builder.Services.AddTransient<IPaginationService<CategoryVm, CategoryFilterVm>, CategoryPaginationService>();
 
 builder.Services.AddTransient<IIngredientControllerService, IngredientControllerService>();
+
 builder.Services.AddTransient<IPizzaControllerService, PizzaControllerService>();
 builder.Services.AddTransient<IPaginationService<PizzaVm, PizzaFilterVm>, PizzaPaginationService>();
 
-builder.Services.AddCors();
-
 var app = builder.Build();
-
-app.UseCors(x => x.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
 string imagesDirPath = Path.Combine(Directory.GetCurrentDirectory(), builder.Configuration["ImagesDir"]);
 
@@ -52,6 +98,15 @@ if (!Directory.Exists(imagesDirPath))
     Directory.CreateDirectory(imagesDirPath);
 }
 
+
+// Для редагування фото
+app.UseCors(
+    configuration => configuration
+        .AllowAnyOrigin()
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+);
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(imagesDirPath),
@@ -59,11 +114,11 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 // Configure the HTTP request pipeline.
-//if (app.Environment.IsDevelopment())
-//{
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
     app.UseSwaggerUI();
-//}
+}
 
 app.UseAuthorization();
 
