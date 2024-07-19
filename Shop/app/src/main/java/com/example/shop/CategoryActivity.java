@@ -57,10 +57,10 @@ public class CategoryActivity extends BaseActivity implements OnCategoryClickLis
 
     @Override
     public void onCategoryClick(CategoryItemDTO category) {
-        if (category.getName().equalsIgnoreCase("Піца")) {
+//        if (category.getName().equalsIgnoreCase("Піца")) {
             // Відкрийте нову активність для відображення піц
             Intent intent = new Intent(this, PizzaActivity.class);
             startActivity(intent);
-        }
+//        }
     }
 }

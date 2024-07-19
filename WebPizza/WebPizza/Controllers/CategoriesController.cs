@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebPizza.Data;
@@ -21,6 +22,7 @@ public class CategoriesController(IMapper mapper,
     ) : ControllerBase
 {
     [HttpGet]
+    [Authorize]
     public async Task<IActionResult> GetAll()
     {
         try
