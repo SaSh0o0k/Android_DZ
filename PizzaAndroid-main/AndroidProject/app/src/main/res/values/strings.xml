@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">Shop</string>
+    <string name="register">Реєстрація</string>
+    <string name="email">Пошта</string>
+    <string name="pib">ПІБ</string>
+    <string name="image">Фото</string>
+    <string name="phone">Телефон</string>
+    <string name="password">Пароль</string>
+    <string name="btn_chose_img">Вибрати фото</string>
+    <string name="btn_register">Зареєструватись</string>
+    <string name="login">Вхід</string>
+    <string name="open">Open navigation Drawer</string>
+    <string name="close">Close navigation Drawer</string>
+    <string name="category_name">Назва категорії</string>
+    <string name="categories">Категорії</string>
+    <string name="pizza_image">Опис</string>
+    <string name="first_name">Ім\'я</string>
+    <string name="last_name">Прізвище</string>
+    <string name="user_name">Нікнейм</string>
+
+
+</resources>

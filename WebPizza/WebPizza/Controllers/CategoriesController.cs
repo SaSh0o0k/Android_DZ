@@ -22,7 +22,7 @@ public class CategoriesController(IMapper mapper,
     ) : ControllerBase
 {
     [HttpGet]
-    [Authorize]
+    //[Authorize]
     public async Task<IActionResult> GetAll()
     {
         try

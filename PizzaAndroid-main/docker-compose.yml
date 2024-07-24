@@ -1,0 +1,38 @@
+services:
+
+  mypizzaserver:
+    container_name: api-pizza-container
+    image: pizza-app
+    restart: on-failure
+    build:
+      context: ./Backend/WebPizza
+      dockerfile: Dockerfile
+    ports:
+      - "5159:8080"
+    volumes:
+      - ./volumes/api/images:/app/Images
+    depends_on:
+      - postgresql
+
+  postgresql:
+    container_name: api-postgresql-container
+    image: postgres
+    restart: on-failure
+    ports:
+        - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: LLSNKmklBDDMlNjg
+    volumes:
+        - ./volumes/db:/var/lib/postgresql/data
+
+  mypizzaclient: 
+    container_name: client-container 
+    image: mypizza-client 
+    restart: on-failure 
+    build: 
+      context: ./admin-pizza-app 
+      dockerfile: Dockerfile 
+    ports: 
+      - "5173:5173" 
+    depends_on: 
+      - mypizzaserver
